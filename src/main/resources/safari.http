@@ -1,0 +1,103 @@
+###Authorization Request
+GET {{host}}/oauth/v1/generate?grant_type=client_credentials
+Content-Type: application/json
+Authorization: Basic cFJZcjZ6anEwaThMMXp6d1FETUxwWkIzeVBDa2hNc2M6UmYyMkJmWm9nMHFRR2xWOQ==
+
+> {%
+ client.global.set("accessToken", response.body.access_token);
+
+ %}
+
+###URL Registration
+POST {{host}}/mpesa/c2b/v1/registerurl
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "ShortCode": 600978,
+  "ResponseType": "Completed",
+  "ConfirmationURL": "https://mydomain.com/confirmation",
+  "ValidationURL": "https://mydomain.com/validation"
+}
+
+
+###Payment Request
+POST {{host}}/mpesa/c2b/v1/simulate
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "ShortCode": 600978,
+  "CommandID": "CustomerBuyGoodsOnline",
+  "Amount": "120",
+  "Msisdn": "254705912645",
+  "BillRefNumber": ""
+}
+
+
+###Generate QR
+POST {{host}}/mpesa/qrcode/v1/generate
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "MerchantName": "Test Supermarket",
+  "RefNo": "Invoice Test",
+  "Amount": "2000",
+  "TrxCode": "BG",
+  "CPI": "681347",
+  "Size": "300"
+}
+
+
+###STK/NIP Request Online
+POST {{host}}/mpesa/stkpush/v1/processrequest
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "BusinessShortCode": 600978,
+  "Password": "4wrrw65r2623632ewt532tetwr",
+  "Timestamp": "20230715201127",
+  "TransactionType": "CustomerPayBillOnline",
+  "Amount": 120,
+  "PartyA": 254706354825,
+  "PartyB": 600978,
+  "PhoneNumber": 254706354825,
+  "CallBackURL": "https://mydomain.com/confirmation",
+  "AccountReference": "Test",
+  "TransactionDesc": "Test"
+}
+
+
+###Reversal
+POST {{host}}/mpesa/reversal/v1/request
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "Initiator": "testapi",
+  "SecurityCredential": "ki+0+8h+DGTMivCxkliuuyNML6LXXwr91Iicr7peFtHIHouP0OeW6Jkkp+WGd0jI3+v0dI68/HiEhQSbpwE90S5THhP+11CNa6BQj+vrM/pQahP/irVHaWVvTS4FrQMUTGP2bjlGRNIs1dMnZLRCNA6xZu/JAjBdNbWXF/LhgDrcGZg4gnroJ6RL1H6hi1adUf5NNZIc7klz8Tyxgyp5U3WYHpYIZpqmYPws+nmmg+s9YgjheE57j+nYa5RCvnvoeDYfHkrfZfIQ2u1vzrjQiRqZErydBUBxRe5oKoEoE/wpqK75CfpBjXjYGO+ipYPW6Sb1fGstcHEckLIW5ufnGw==",
+  "CommandID": "TransactionReversal",
+  "TransactionID": "OEI2AK4Q16",
+  "Amount": 150,
+  "ReceiverParty": 600977,
+  "RecieverIdentifierType": 11,
+  "ResultURL": "https://mydomain.com/Reversal/result/",
+  "QueueTimeOutURL": "https://mydomain.com/Reversal/queue/",
+  "Remarks": "Test Remarks",
+  "Occasion": "work"
+}
+
+
+###Check Status of LNP online
+POST {{host}}/mpesa/stkpushquery/v1/query
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "BusinessShortCod": 600977,
+  "Password": "MTc0Mzc5YmZiMjc5TliZGJjZjE1OGU5N2RkNzFhNDY3Y2QyZTBjODkzMDU5YjEwZjc4ZTZiNzJhZGExZWQyYzkxOTIwMTYwMjE2MTY1NjI3",
+  "Timestamp": 20230715211212,
+  "CheckoutRequestID": "ws_CO_260520211133524545"
+}

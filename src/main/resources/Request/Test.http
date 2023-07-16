@@ -1,0 +1,24 @@
+###Mpesa Autorization Api
+GET {{host}}/oauth/v1/generate?grant_type=client_credentials
+Content-Type: application/json
+Authorization: Basic cFJZcjZ6anEwaThMMXp6d1FETUxwWkIzeVBDa2hNc2M6UmYyMkJmWm9nMHFRR2xWOQ==
+
+> {%
+ client.global.set("access_token", response.body.access_token)
+ client.test("testng wether expiry time is consistent", ()=>{
+     client.assert(response.body.expires_in === "3599", "the expected value is 3599 but we got " + response.body.expires_in)
+ })
+ %}
+
+
+###URL Registration
+POST {{host}}/mpesa/c2b/v1/registerurl
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+{
+  "ShortCode": 600978,
+  "ResponseType": "Completed",
+  "ConfirmationURL": "https://mydomain.com/confirmation",
+  "ValidationURL": "https://mydomain.com/validation"
+}
