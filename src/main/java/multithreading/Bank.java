@@ -2,6 +2,8 @@ package multithreading;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * a bank that stores multiple accounts
@@ -29,16 +31,27 @@ public class Bank
      * @param transferTo the account to credit the amount
      * @param amount the amount to transfer*/
     public void transfer(int transferFrom, int transferTo, double amount){
+        /*construct a lock*/
+        Lock transferLock = new ReentrantLock();
 
-        if (this.get(transferFrom) < amount) return;
-        System.out.println(Thread.currentThread());
+        /*lock this block of code*/
+        transferLock.lock();
 
-        this.set(transferFrom, this.get(transferFrom) - amount);
-        this.set(transferTo, this.get(transferTo) + amount);
+        try
+        {
+            if (this.get(transferFrom) < amount) return;
+            System.out.println(Thread.currentThread());
 
-        System.out.printf("%8.2f transferred from %s to %s, balance is %8.2f %n", amount, transferFrom, transferTo, this.get(
-                transferFrom
-        ));
+            this.set(transferFrom, this.get(transferFrom) - amount);
+            this.set(transferTo, this.get(transferTo) + amount);
+            double totalBalance = getTotalBalance();
+
+            System.out.printf("%8.2f transferred from %s to %s, balance is %8.2f %n", amount, transferFrom, transferTo, totalBalance);
+        }
+        finally {
+            /*unlock the lock*/
+            transferLock.unlock();
+        }
     }
 
     /**

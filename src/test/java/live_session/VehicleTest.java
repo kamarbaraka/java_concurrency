@@ -17,7 +17,7 @@ class VehicleTest {
         Car car = new Car();
         car.setManufacturer("toyota");
         car.setYear(2020);
-        car.setNumDoors(4);
+        car.numDoors = 4;
         car.accelerate();
         car.brake();
 

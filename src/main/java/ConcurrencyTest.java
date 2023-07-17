@@ -42,6 +42,7 @@ public class ConcurrencyTest {
         thread2 = new Thread(task2);
         thread3 = new Thread(task3);
 
+        thread2.setPriority(10);
         thread2.setDaemon(true);
         thread2.setUncaughtExceptionHandler((thread, exception) -> {
             System.err.printf("error: %s from %s %n", exception, thread);
